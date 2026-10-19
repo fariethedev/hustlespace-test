@@ -4,6 +4,11 @@ HustleUP Test is a privacy-safe, single-user product prototype with a tiny
 read-only mock backend for reviewing the HustleUP marketplace concept. It is
 intentionally separate from the operational HustleUP application.
 
+> **Relationship to production:** This repository is a transparent mock of the
+> production HustleUP project. It demonstrates selected production concepts
+> with fictional data only; it is not the production repository, does not copy
+> production data or credentials, and is not an operational marketplace.
+
 The mock backend serves only fictional catalog data. It has no database,
 accounts, contact forms, payments, messaging, uploads, analytics, cookies,
 external integrations, or write endpoints.
@@ -43,6 +48,8 @@ server.
 See [`SCOPE.md`](SCOPE.md). This repository must not be expanded into a
 multi-user service or connected to real data without a new program eligibility
 review.
+
+See [`ROADMAP.md`](ROADMAP.md) for approximately 28 hours of planned work.
 
 ## License
 
