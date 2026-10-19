@@ -1,4 +1,4 @@
-const listings = [
+const fallbackListings = [
   { title: "Brand moodboard", maker: "Studio Sol", category: "Services", price: "€85", description: "A bright visual direction for your next small idea.", symbol: "✷", visual: "visual-1" },
   { title: "Hand-thrown cups", maker: "Marta Clay", category: "Goods", price: "€28", description: "Small-batch ceramics with a little bit of wobble.", symbol: "◒", visual: "visual-2" },
   { title: "Night drawing club", maker: "The Blue Room", category: "Events", price: "€12", description: "A relaxed evening of prompts, music, and making.", symbol: "✎", visual: "visual-3" },
@@ -6,6 +6,8 @@ const listings = [
   { title: "Printed tote set", maker: "Common Thread", category: "Goods", price: "€19", description: "Two screen-printed totes for everyday errands.", symbol: "▱", visual: "visual-5" },
   { title: "Sunday supper", maker: "Nia Cooks", category: "Events", price: "€35", description: "A fictional shared table with a seasonal menu.", symbol: "✺", visual: "visual-6" },
 ];
+
+let listings = [];
 
 const grid = document.querySelector("#listing-grid");
 const emptyState = document.querySelector("#empty-state");
@@ -66,4 +68,17 @@ search.addEventListener("input", render);
 document.querySelector("#dialog-close").addEventListener("click", () => dialog.close());
 document.querySelector("#dialog-done").addEventListener("click", () => dialog.close());
 
-render();
+async function loadListings() {
+  try {
+    const response = await fetch("/api/listings");
+    if (!response.ok) throw new Error("Mock API unavailable");
+    listings = await response.json();
+  } catch {
+    // Direct file previews still work without a server. The fallback remains
+    // fictional and is never written to storage or sent anywhere.
+    listings = fallbackListings;
+  }
+  render();
+}
+
+loadListings();

@@ -1,25 +1,31 @@
 # HustleUP Test
 
-HustleUP Test is a privacy-safe, single-user product prototype for reviewing
-the HustleUP marketplace concept. It is intentionally separate from the
-operational HustleUP application.
+HustleUP Test is a privacy-safe, single-user product prototype with a tiny
+read-only mock backend for reviewing the HustleUP marketplace concept. It is
+intentionally separate from the operational HustleUP application.
 
-This prototype uses only fictional, hardcoded listings and local in-memory UI
-state. It has no backend, accounts, contact forms, payments, messaging,
-uploads, analytics, cookies, or external integrations.
+The mock backend serves only fictional catalog data. It has no database,
+accounts, contact forms, payments, messaging, uploads, analytics, cookies,
+external integrations, or write endpoints.
 
 ## Run locally
 
 No package installation is required. From this directory run:
 
 ```powershell
-python -m http.server 4173
+node server.js
 ```
 
 Then open <http://localhost:4173>.
 
-You can also open `index.html` directly in a browser, although a local server
-more closely matches a normal web preview.
+The server exposes only read-only demo endpoints:
+
+- `GET /api/health`
+- `GET /api/categories`
+- `GET /api/listings`
+
+You can also open `index.html` directly in a browser; the UI falls back to the
+same fictional catalog if the mock server is not running.
 
 ## Safety boundary
 
