@@ -1,14 +1,24 @@
-const http = require("node:http");
-const fs = require("node:fs");
-const path = require("node:path");
-const { URL } = require("node:url");
+import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
+import * as fs from "node:fs";
+import * as path from "node:path";
+import { URL } from "node:url";
 
 const PORT = Number(process.env.PORT || 4173);
-const ROOT = __dirname;
+const ROOT = path.resolve(__dirname, "..");
+
+type Listing = {
+  title: string;
+  maker: string;
+  category: "Services" | "Goods" | "Events";
+  price: string;
+  description: string;
+  symbol: string;
+  visual: string;
+};
 
 // Fictional catalog data only. This server deliberately has no database,
 // authentication, cookies, request logging, uploads, or write endpoints.
-const LISTINGS = [
+const LISTINGS: Listing[] = [
   { title: "Brand moodboard", maker: "Studio Sol", category: "Services", price: "€85", description: "A bright visual direction for your next small idea.", symbol: "✷", visual: "visual-1" },
   { title: "Hand-thrown cups", maker: "Marta Clay", category: "Goods", price: "€28", description: "Small-batch ceramics with a little bit of wobble.", symbol: "◒", visual: "visual-2" },
   { title: "Night drawing club", maker: "The Blue Room", category: "Events", price: "€12", description: "A relaxed evening of prompts, music, and making.", symbol: "✎", visual: "visual-3" },
@@ -17,7 +27,7 @@ const LISTINGS = [
   { title: "Sunday supper", maker: "Nia Cooks", category: "Events", price: "€35", description: "A fictional shared table with a seasonal menu.", symbol: "✺", visual: "visual-6" },
 ];
 
-function sendJson(res, status, value) {
+function sendJson(res: ServerResponse, status: number, value: unknown): void {
   const body = JSON.stringify(value);
   res.writeHead(status, {
     "Content-Type": "application/json; charset=utf-8",
@@ -27,7 +37,7 @@ function sendJson(res, status, value) {
   res.end(body);
 }
 
-function serveStatic(res, pathname) {
+function serveStatic(res: ServerResponse, pathname: string): void {
   const requested = pathname === "/" ? "/index.html" : pathname;
   const filePath = path.resolve(ROOT, `.${requested}`);
   if (!filePath.startsWith(ROOT + path.sep)) {
@@ -40,14 +50,14 @@ function serveStatic(res, pathname) {
       sendJson(res, 404, { error: "Not found" });
       return;
     }
-    const contentTypes = { ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".html": "text/html; charset=utf-8" };
+    const contentTypes: Record<string, string> = { ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".html": "text/html; charset=utf-8" };
     res.writeHead(200, { "Content-Type": contentTypes[path.extname(filePath)] || "application/octet-stream" });
     res.end(data);
   });
 }
 
-const server = http.createServer((req, res) => {
-  const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+const server = createServer((req: IncomingMessage, res: ServerResponse) => {
+  const url = new URL(req.url ?? "/", `http://${req.headers.host || "localhost"}`);
 
   if (url.pathname.startsWith("/api/")) {
     if (req.method !== "GET") {

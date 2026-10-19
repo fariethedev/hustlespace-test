@@ -1,4 +1,14 @@
-const fallbackListings = [
+type Listing = {
+  title: string;
+  maker: string;
+  category: "Services" | "Goods" | "Events";
+  price: string;
+  description: string;
+  symbol: string;
+  visual: string;
+};
+
+const fallbackListings: Listing[] = [
   { title: "Brand moodboard", maker: "Studio Sol", category: "Services", price: "€85", description: "A bright visual direction for your next small idea.", symbol: "✷", visual: "visual-1" },
   { title: "Hand-thrown cups", maker: "Marta Clay", category: "Goods", price: "€28", description: "Small-batch ceramics with a little bit of wobble.", symbol: "◒", visual: "visual-2" },
   { title: "Night drawing club", maker: "The Blue Room", category: "Events", price: "€12", description: "A relaxed evening of prompts, music, and making.", symbol: "✎", visual: "visual-3" },
@@ -7,15 +17,15 @@ const fallbackListings = [
   { title: "Sunday supper", maker: "Nia Cooks", category: "Events", price: "€35", description: "A fictional shared table with a seasonal menu.", symbol: "✺", visual: "visual-6" },
 ];
 
-let listings = [];
+let listings: Listing[] = [];
 
-const grid = document.querySelector("#listing-grid");
-const emptyState = document.querySelector("#empty-state");
-const search = document.querySelector("#search");
-const filters = document.querySelector("#filters");
-const dialog = document.querySelector("#preview-dialog");
-const dialogTitle = document.querySelector("#dialog-title");
-const dialogCopy = document.querySelector("#dialog-copy");
+const grid = document.querySelector<HTMLElement>("#listing-grid")!;
+const emptyState = document.querySelector<HTMLElement>("#empty-state")!;
+const search = document.querySelector<HTMLInputElement>("#search")!;
+const filters = document.querySelector<HTMLElement>("#filters")!;
+const dialog = document.querySelector<HTMLDialogElement>("#preview-dialog")!;
+const dialogTitle = document.querySelector<HTMLElement>("#dialog-title")!;
+const dialogCopy = document.querySelector<HTMLElement>("#dialog-copy")!;
 
 let activeFilter = "All";
 
@@ -45,34 +55,35 @@ function render() {
   `).join("");
 
   emptyState.hidden = visible.length > 0;
-  grid.querySelectorAll(".preview-button").forEach((button) => {
+  grid.querySelectorAll<HTMLButtonElement>(".preview-button").forEach((button) => {
     button.addEventListener("click", () => openPreview(listings[Number(button.dataset.index)]));
   });
 }
 
-function openPreview(listing) {
+function openPreview(listing: Listing): void {
   dialogTitle.textContent = listing.title;
   dialogCopy.textContent = `This fictional ${listing.category.toLowerCase()} preview would let a visitor understand the next step for “${listing.title}”. In this prototype, the interaction stays in memory and does not create a booking, collect contact details, or send a message.`;
   dialog.showModal();
 }
 
-filters.addEventListener("click", (event) => {
-  const button = event.target.closest("button[data-filter]");
+filters.addEventListener("click", (event: MouseEvent) => {
+  if (!(event.target instanceof Element)) return;
+  const button = event.target.closest<HTMLButtonElement>("button[data-filter]");
   if (!button) return;
-  activeFilter = button.dataset.filter;
+  activeFilter = button.dataset.filter ?? "All";
   filters.querySelectorAll(".filter").forEach((item) => item.classList.toggle("active", item === button));
   render();
 });
 
 search.addEventListener("input", render);
-document.querySelector("#dialog-close").addEventListener("click", () => dialog.close());
-document.querySelector("#dialog-done").addEventListener("click", () => dialog.close());
+document.querySelector<HTMLButtonElement>("#dialog-close")!.addEventListener("click", () => dialog.close());
+document.querySelector<HTMLButtonElement>("#dialog-done")!.addEventListener("click", () => dialog.close());
 
 async function loadListings() {
   try {
     const response = await fetch("/api/listings");
     if (!response.ok) throw new Error("Mock API unavailable");
-    listings = await response.json();
+    listings = (await response.json()) as Listing[];
   } catch {
     // Direct file previews still work without a server. The fallback remains
     // fictional and is never written to storage or sent anywhere.
