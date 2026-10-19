@@ -9,6 +9,8 @@ not a marketplace service.
 - Search and category filtering performed in the browser.
 - A local-only preview panel that demonstrates a possible service-request flow.
 - A mock backend that serves the fictional catalog and health status only.
+- Read-only preview cards for the production concepts: shops, social feed,
+  stories, messages, orders, tickets, seller tools, Bond, and premium plans.
 - Temporary UI state held only in JavaScript memory until the page is closed.
 
 ## Explicitly excluded

@@ -11,6 +11,11 @@ external integrations, or write endpoints.
 The source is TypeScript (`app.ts` and `server.ts`), compiled with `tsc`, and
 the backend runs on Node.js without a web framework or runtime dependency.
 
+The UI also includes simulated, read-only previews for shops, social feed and
+stories, direct messages, orders and protection, events and tickets, seller
+tools, Hustle Bond, and premium plans. These are fictional product concepts,
+not operational features.
+
 ## Run locally
 
 Requires Node.js 20+ and npm. From this directory run:
